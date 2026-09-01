@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ekwato - Mercado Online</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-container">
+      <div class="logo-section" onclick="filtrarCategoria('Todas')">
+        <h1>EKWATO</h1>
+      </div>
+      
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Buscar productos..." onkeyup="buscarProductos()">
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn btn-outline" id="btnPerfil" onclick="abrirModalPerfil()">👤 Perfil</button>
+        <button class="btn btn-primary" onclick="abrirModalVenta()">+ Publicar</button>
+        <button class="cart-icon-btn" onclick="abrirModalCarrito()">
+          🛒 <span class="cart-badge" id="cartCount">0</span>
+        </button>
+        <button class="btn btn-outline" onclick="solicitarAccesoAdmin()">⚙️ Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CATEGORÍAS -->
+  <div class="categories-bar">
+    <button class="cat-btn active" onclick="filtrarCategoria('Todas', this)">Todas</button>
+    <button class="cat-btn" onclick="filtrarCategoria('Electrónica', this)">Electrónica</button>
+    <button class="cat-btn" onclick="filtrarCategoria('Ropa', this)">Ropa y Moda</button>
+    <button class="cat-btn" onclick="filtrarCategoria('Hogar', this)">Hogar</button>
+    <button class="cat-btn" onclick="filtrarCategoria('Alimentos', this)">Alimentos</button>
+    <button class="cat-btn" onclick="filtrarCategoria('Otros', this)">Otros</button>
+  </div>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="container">
+    <div id="productGrid" class="product-grid">
+      <!-- Se llena dinámicamente -->
+    </div>
+  </main>
+
+  <!-- MODAL PERFIL -->
+  <div id="modalPerfil" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Tu Perfil de Vendedor</h3>
+        <button class="modal-close" onclick="cerrarModalPerfil()">&times;</button>
+      </div>
+      <form id="perfilForm" onsubmit="guardarPerfil(event)">
+        <div class="form-group">
+          <label>Tu Nombre / Tienda:</label>
+          <input type="text" id="perfilNombre" required>
+        </div>
+        <div class="form-group">
+          <label>Número Muni Dinero:</label>
+          <input type="tel" id="perfilMuni" required placeholder="Ej: 222XXXXXX">
+        </div>
+        <div class="form-group">
+          <label>Teléfono de Contacto:</label>
+          <input type="tel" id="perfilTelefono" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Datos</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL VENDER -->
+  <div id="modalVenta" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Publicar Producto</h3>
+        <button class="modal-close" onclick="cerrarModalVenta()">&times;</button>
+      </div>
+      <form id="productoForm" onsubmit="guardarProductoConFoto(event)">
+        <div class="form-group">
+          <label>Nombre del Producto:</label>
+          <input type="text" id="nombre" required>
+        </div>
+        <div class="form-group">
+          <label>Precio Base (FCFA):</label>
+          <input type="number" id="precio" min="1" required>
+          <small style="color: var(--text-muted);">Ekwato añadirá un 10% sobre este precio al cliente.</small>
+        </div>
+        <div class="form-group">
+          <label>Categoría:</label>
+          <select id="categoria">
+            <option value="Electrónica">Electrónica</option>
+            <option value="Ropa">Ropa y Moda</option>
+            <option value="Hogar">Hogar</option>
+            <option value="Alimentos">Alimentos</option>
+            <option value="Otros">Otros</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Fotografía del Producto:</label>
+          <input type="file" id="imagenFile" accept="image/*" required>
+        </div>
+        <div class="form-group">
+          <label>Descripción:</label>
+          <textarea id="descripcion" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Publicar Ahora</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DETALLES -->
+  <div id="modalDetalle" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="detNombre">Detalles</h3>
+        <button class="modal-close" onclick="cerrarModalDetalle()">&times;</button>
+      </div>
+      <img id="detImagen" src="" style="width:100%; height:200px; object-fit:cover; border-radius:6px; margin-bottom:10px;">
+      <p id="detPrecio" style="font-size:1.2rem; font-weight:bold; color:var(--primary);"></p>
+      <p id="detVendedor" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;"></p>
+      <p id="detDescripcion" style="margin-bottom:15px;"></p>
+      <button id="detBtnComprar" class="btn btn-primary" style="width: 100%;">Agregar al Carrito</button>
+    </div>
+  </div>
+
+  <!-- MODAL CARRITO -->
+  <div id="modalCarrito" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Tu Carrito</h3>
+        <button class="modal-close" onclick="cerrarModalCarrito()">&times;</button>
+      </div>
+      <div id="carritoItems" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
+      <p style="font-weight: bold; font-size: 1.1rem; text-align: right; margin-bottom: 15px;">
+        Total: <span id="carritoTotal">0 FCFA</span>
+      </p>
+      <button class="btn btn-primary" style="width: 100%;" onclick="abrirModalPago()">Procesar Pago</button>
+    </div>
+  </div>
+
+  <!-- MODAL PAGO MUNI -->
+  <div id="modalPago" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Pasarela Muni Dinero</h3>
+        <button class="modal-close" onclick="cerrarModalPago()">&times;</button>
+      </div>
+      <form id="pagoForm" onsubmit="confirmarPedido(event)">
+        <div style="background: #e0f2fe; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 12px;">
+          Envíe el total a pagar al número Muni Central de Ekwato: <strong>555 504 617</strong>.
+        </div>
+        <div class="form-group">
+          <label>Nombre del Comprador:</label>
+          <input type="text" id="clienteNombre" required>
+        </div>
+        <div class="form-group">
+          <label>Teléfono de Contacto:</label>
+          <input type="tel" id="clienteTelefono" required>
+        </div>
+        <div class="form-group">
+          <label>Dirección de Entrega:</label>
+          <input type="text" id="clienteDireccion" required>
+        </div>
+        <div class="form-group">
+          <label>Código de Referencia del SMS Muni:</label>
+          <input type="text" id="referenciaPago" placeholder="Ej: TXN123456" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Finalizar Pedido</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- BACK-OFFICE ADMIN -->
+  <div id="modalAdmin" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <h3>Panel Back-Office Ekwato</h3>
+        <button class="modal-close" onclick="cerrarModalAdmin()">&times;</button>
+      </div>
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID / Cliente</th>
+              <th>Ref. SMS</th>
+              <th>Total Cobrado</th>
+              <th>Muni Vendedor</th>
+              <th>A Pagar Vendedor</th>
+              <th>Comisión Ekwato</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaPedidosAdmin">
+            <!-- Cargado vía API -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

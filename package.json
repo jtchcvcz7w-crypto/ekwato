@@ -1,0 +1,13 @@
+{
+  "name": "ekwato",
+  "version": "1.0.0",
+  "description": "Mercado Online Ekwato",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.7"
+  }
+} 
