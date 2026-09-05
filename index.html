@@ -4,31 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ekwato - Mercado Online</title>
+  <!-- Estilos CSS Modernos V4 -->
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <!-- FontAwesome para Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <!-- HEADER -->
+  <!-- HEADER / CABECERA CON LOGO V4 -->
   <header>
     <div class="header-container">
       <div class="logo-section" onclick="filtrarCategoria('Todas')">
-        <h1>EKWATO</h1>
+        <img src="logo.jpeg" alt="Ekwato Logo" class="logo-img" onerror="this.src='logo-placeholder.jpeg';">
+        
       </div>
-      
+
       <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Buscar productos..." onkeyup="buscarProductos()">
+        <input type="text" id="searchInput" placeholder="Buscar productos, marcas, tiendas..." onkeyup="buscarProductos()">
+        <button id="btnBuscar" onclick="buscarProductos()" title="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
       </div>
 
       <div class="nav-actions">
-        <button class="btn btn-outline" id="btnPerfil" onclick="abrirModalPerfil()">👤 Perfil</button>
-        <button class="btn btn-primary" onclick="abrirModalVenta()">+ Publicar</button>
+        <button class="btn btn-outline" id="btnPerfil" onclick="abrirModalPerfil()"><i class="fa-solid fa-user"></i> Perfil</button>
+        <button class="btn btn-primary" onclick="abrirModalVenta()"><i class="fa-solid fa-plus"></i> Publicar</button>
         <button class="cart-icon-btn" onclick="abrirModalCarrito()">
-          🛒 <span class="cart-badge" id="cartCount">0</span>
+          <i class="fa-solid fa-cart-shopping"></i> 
+          <span class="cart-badge" id="cartCount">0</span>
         </button>
-        <button class="btn btn-outline" onclick="solicitarAccesoAdmin()">⚙️ Admin</button>
+        <button class="btn btn-outline" onclick="solicitarAccesoAdmin()"><i class="fa-solid fa-gear"></i> Admin</button>
       </div>
     </div>
   </header>
+
+ 
+  <!-- BANNER DE PUBLICIDAD AUTOMÁTICO -->
+<div id="bannerPublicidad" class="container" style="margin-top: 15px;">
+    <div class="slider-banner">
+        <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&auto=format&fit=crop&q=60" alt="Anuncio 1" class="slide-activo">
+        <img src="https://images.unsplash.com/photo-1555529771-835f59fc5efe?w=800&auto=format&fit=crop&q=60" alt="Anuncio 2">
+        <img src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&auto=format&fit=crop&q=60" alt="Anuncio 3">
+    </div>
+</div>
 
   <!-- CATEGORÍAS -->
   <div class="categories-bar">
@@ -42,9 +59,10 @@
 
   <!-- CONTENEDOR PRINCIPAL -->
   <main class="container">
-    <div id="productGrid" class="product-grid">
-      <!-- Se llena dinámicamente -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
+      <h2 style="font-size: 1.25rem; font-weight: 700;">Artículos Destacados</h2>
     </div>
+    <div id="productGrid" class="product-grid"></div>
   </main>
 
   <!-- MODAL PERFIL -->
@@ -60,14 +78,70 @@
           <input type="text" id="perfilNombre" required>
         </div>
         <div class="form-group">
+          <label>Ciudad / Municipio:</label>
+          <select id="perfilMuniCiudad" required>
+            <option value="Malabo">Malabo</option>
+            <option value="Bata">Bata</option>
+            <option value="Ebibeyin">Ebibeyin</option>
+            <option value="Mongomo">Mongomo</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>Número Muni Dinero:</label>
           <input type="tel" id="perfilMuni" required placeholder="Ej: 222XXXXXX">
         </div>
         <div class="form-group">
           <label>Teléfono de Contacto:</label>
           <input type="tel" id="perfilTelefono" required>
+            <button type="button" id="btnCerrarSesion" onclick="cerrarSesionEkwato()" style="width: 100%; margin-top: 10px; background-color: #ef4444; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+    🚪 Cerrar Sesión
+</body>
         </div>
+        <!-- SECCIÓN PARA CAMBIAR FOTO DE PERFIL -->
+<div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 15px;">
+    <h4 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 10px; color: #1e293b;">Actualizar mi foto de perfil</h4>
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <img id="previewPerfil" src="" alt="Vista previa" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+        <div>
+            <input type="file" id="inputNuevaFotoPerfil" accept="image/*" onchange="previsualizarNuevaFoto(event)" style="font-size: 0.8rem; margin-bottom: 5px;">
+            <br>
+            <button type="button" onclick="guardarNuevaFotoPerfil()" style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 600;">Guardar nueva foto</button>
+        </div>
+    </div>
+</div>
+
+
         <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Datos</button>
+      </form>
+
+      <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border-color);">
+      <h4 style="margin-bottom: 8px; font-size: 1rem; color: var(--primary);">📢 Promocionar en el Banner Principal</h4>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Paga tu espacio publicitario en el número Muni Central y envía tu solicitud.</p>
+      
+      <form id="formSolicitudAnuncio" onsubmit="enviarSolicitudAnuncio(event)">
+        <div class="form-group">
+          <label>Título del Anuncio:</label>
+          <input type="text" id="anuncioTituloInput" placeholder="Ej: 🔥 ¡Grandes Rebajas de Verano!" required>
+        </div>
+        <div class="form-group">
+          <label>Descripción del Anuncio:</label>
+          <textarea id="anuncioDescInput" rows="2" placeholder="Ej: Ven a nuestra tienda y llévate un 20% de descuento..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Referencia de Pago SMS:</label>
+          <input type="text" id="anuncioRefPago" placeholder="Ej: TXN-ADS987" required>
+        </div>
+        <div class="form-group">
+          <label>Tiempo de Duración del Anuncio:</label>
+          <select id="anuncioDuracionInput" required>
+            <option value="3">3 Días</option>
+            <option value="7">1 Semana (7 Días)</option>
+            <option value="14">2 Semanas (14 Días)</option>
+            <option value="30">1 Mes (30 Días)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-outline" style="width: 100%; border-color: var(--primary); color: var(--primary);">Enviar Solicitud de Anuncio</button>
       </form>
     </div>
   </div>
@@ -90,6 +164,20 @@
           <small style="color: var(--text-muted);">Ekwato añadirá un 10% sobre este precio al cliente.</small>
         </div>
         <div class="form-group">
+          <label>Cantidad en Stock:</label>
+          <input type="number" id="stock" min="1" value="1" required>
+        </div>
+        <div class="form-group">
+          <label>Ciudad / Municipio:</label>
+          <select id="pubCiudad" required>
+            <option value="Malabo">Malabo</option>
+            <option value="Bata">Bata</option>
+            <option value="Ebibeyin">Ebibeyin</option>
+            <option value="Mongomo">Mongomo</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>Categoría:</label>
           <select id="categoria">
             <option value="Electrónica">Electrónica</option>
@@ -101,7 +189,7 @@
         </div>
         <div class="form-group">
           <label>Fotografía del Producto:</label>
-          <input type="file" id="imagenFile" accept="image/*" required>
+          <input type="file" id="imagenFile" accept="image/*" multiple required>
         </div>
         <div class="form-group">
           <label>Descripción:</label>
@@ -119,11 +207,45 @@
         <h3 id="detNombre">Detalles</h3>
         <button class="modal-close" onclick="cerrarModalDetalle()">&times;</button>
       </div>
-      <img id="detImagen" src="" style="width:100%; height:200px; object-fit:cover; border-radius:6px; margin-bottom:10px;">
+      <img id="detImagen" src="" style="width:100%; height:220px; object-fit:cover; border-radius:var(--radius); margin-bottom:12px;">
+      
       <p id="detPrecio" style="font-size:1.2rem; font-weight:bold; color:var(--primary);"></p>
-      <p id="detVendedor" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;"></p>
-      <p id="detDescripcion" style="margin-bottom:15px;"></p>
-      <button id="detBtnComprar" class="btn btn-primary" style="width: 100%;">Agregar al Carrito</button>
+      <p id="detStock" style="font-size:0.85rem; font-weight:600; color:var(--warning); margin-bottom:4px;"></p>
+      <p id="detCiudad" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:10px;"></p>
+      
+      <!-- TIENDA / VENDEDOR -->
+      <div style="background:#f8fafc; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius); margin-bottom:12px;">
+        <p style="font-size:0.9rem;">Tienda: <strong id="detVendedor" style="color:var(--primary); cursor:pointer; text-decoration:underline;" onclick="verTiendaVendedor()"></strong></p>
+        <p style="font-size:0.85rem; color:var(--text-muted);">Teléfono: <span id="detTelefonoVendedor"></span></p>
+      </div>
+
+      <p id="detDescripcion" style="font-size:0.9rem; margin-bottom:16px;"></p>
+
+      <!-- CHAT INTERNO -->
+      <div style="border:1px solid var(--border-color); border-radius:var(--radius); padding:10px; margin-bottom:16px;">
+        <h4 style="font-size:0.85rem; margin-bottom:6px;">Chat con el vendedor:</h4>
+        <div id="chatMensajes" style="height:110px; overflow-y:auto; font-size:0.8rem; background:#f8fafc; padding:8px; border-radius:6px; margin-bottom:8px;"></div>
+        <div style="display:flex; gap:6px;">
+          <input type="text" id="inputChat" placeholder="Escribe un mensaje..." style="font-size:0.85rem; padding:6px 10px; flex:1; border:1px solid var(--border-color); border-radius:var(--radius); outline:none;">
+          <button onclick="enviarMensajeChat()" class="btn btn-primary" style="padding:6px 14px; font-size:0.85rem;">Enviar</button>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button id="detBtnComprar" class="btn btn-primary" style="flex:1;">Agregar al Carrito</button>
+        <button id="detBtnEliminar" class="btn" style="background:var(--danger); color:white; display:none;" onclick="eliminarProductoActual()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VISTA TIENDA DEL VENDEDOR -->
+  <div id="modalTienda" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <h3 id="tituloTiendaVendedor">Tienda</h3>
+        <button class="modal-close" onclick="cerrarModalTienda()">&times;</button>
+      </div>
+      <div id="gridTiendaVendedor" class="product-grid" style="margin-top:0;"></div>
     </div>
   </div>
 
@@ -134,7 +256,7 @@
         <h3>Tu Carrito</h3>
         <button class="modal-close" onclick="cerrarModalCarrito()">&times;</button>
       </div>
-      <div id="carritoItems" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;"></div>
+      <div id="carritoItems" style="max-height: 220px; overflow-y: auto; margin-bottom: 15px;"></div>
       <p style="font-weight: bold; font-size: 1.1rem; text-align: right; margin-bottom: 15px;">
         Total: <span id="carritoTotal">0 FCFA</span>
       </p>
@@ -150,7 +272,7 @@
         <button class="modal-close" onclick="cerrarModalPago()">&times;</button>
       </div>
       <form id="pagoForm" onsubmit="confirmarPedido(event)">
-        <div style="background: #e0f2fe; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 12px;">
+        <div style="background: var(--accent-light); color: var(--primary); padding: 12px; border-radius: var(--radius); font-size: 0.85rem; margin-bottom: 14px; font-weight: 500;">
           Envíe el total a pagar al número Muni Central de Ekwato: <strong>555 504 617</strong>.
         </div>
         <div class="form-group">
@@ -176,12 +298,15 @@
 
   <!-- BACK-OFFICE ADMIN -->
   <div id="modalAdmin" class="modal-overlay hidden">
-    <div class="modal-content" style="max-width: 900px;">
+    <div class="modal-content" style="max-width: 950px; max-height: 90vh; overflow-y: auto;">
       <div class="modal-header">
         <h3>Panel Back-Office Ekwato</h3>
         <button class="modal-close" onclick="cerrarModalAdmin()">&times;</button>
       </div>
-      <div class="admin-table-container">
+      
+      <!-- SECCIÓN 1: PEDIDOS -->
+      <h4 style="margin-bottom: 8px;">📦 Gestión de Pedidos y Liquidaciones</h4>
+      <div class="admin-table-container" style="margin-bottom: 25px;">
         <table class="admin-table">
           <thead>
             <tr>
@@ -195,13 +320,29 @@
               <th>Acción</th>
             </tr>
           </thead>
-          <tbody id="tablaPedidosAdmin">
-            <!-- Cargado vía API -->
-          </tbody>
+          <tbody id="tablaPedidosAdmin"></tbody>
         </table>
       </div>
+
+      <!-- SECCIÓN 2: SOLICITUDES DE ANUNCIOS -->
+      <h4 style="margin-bottom: 8px;">📢 Solicitudes de Anuncios Pendientes</h4>
+      <div class="admin-table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Vendedor / Teléfono</th>
+              <th>Título y Descripción</th>
+              <th>Referencia Pago</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaAnunciosAdmin"></tbody>
+        </table>
+      </div>
+
     </div>
   </div>
+ 
 
   <script src="script.js"></script>
 </body>
