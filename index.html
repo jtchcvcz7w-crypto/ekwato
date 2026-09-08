@@ -355,5 +355,52 @@
  
 
   <script src="script.js"></script>
+  <!-- Banner personalizado de instalación PWA -->
+<div id="bannerInstalacion" style="display: none; position: fixed; bottom: 20px; left: 20px; right: 20px; background: #1e293b; color: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 9999; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+  <div>
+    <h4 style="margin: 0 0 4px 0; font-size: 1rem; font-weight: bold;">¡Instala Ekwato!</h4>
+    <p style="margin: 0; font-size: 0.85rem; color: #cbd5e1;">Accede más rápido y úsalo como una app en tu móvil.</p>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <button id="btnInstalarApp" style="background: #2563eb; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer;">Instalar</button>
+    <button id="btnCerrarBanner" style="background: transparent; color: #94a3b8; border: none; padding: 8px; cursor: pointer; font-size: 1.1rem;">&times;</button>
+  </div>
+</div>
+
+<script>
+  let deferredPrompt;
+  const banner = document.getElementById('bannerInstalacion');
+  const btnInstalar = document.getElementById('btnInstalarApp');
+  const btnCerrar = document.getElementById('btnCerrarBanner');
+
+  // Ocultar el banner por defecto
+  banner.style.display = 'none';
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Previene que Chrome muestre su barra de instalación automática estándar
+    e.preventDefault();
+    // Guarda el evento para lanzarlo cuando el usuario pinche en tu botón
+    deferredPrompt = e;
+    // Muestra tu banner personalizado
+    banner.style.display = 'flex';
+  });
+
+  btnInstalar.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      // Muestra la ventana nativa de instalación del sistema
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('El usuario aceptó instalar Ekwato');
+      }
+      deferredPrompt = null;
+      banner.style.display = 'none';
+    }
+  });
+
+  btnCerrar.addEventListener('click', () => {
+    banner.style.display = 'none';
+  });
+</script>
 </body>
 </html>
