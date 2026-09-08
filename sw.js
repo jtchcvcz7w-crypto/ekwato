@@ -1,24 +1,18 @@
 const CACHE_NAME = 'ekwato-v1';
-const assetsToCache = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/script.js',
-  '/logo.jpeg'
-];
 
+// Instalación básica del Service Worker
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(assetsToCache);
-    })
-  );
+  self.skipWaiting();
 });
 
+// Activación
+self.addEventListener('activate', (e) => {
+  e.waitUntil(clients.claim());
+});
+
+// Interceptar peticiones para que funcione online sin bloqueos
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      return cachedResponse || fetch(e.request);
-    })
+    fetch(e.request).catch(() => caches.match(e.request))
   );
 });
